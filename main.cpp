@@ -22,6 +22,6 @@ int main(int argc, char *argv[])
     } else {
         std::cout << "Didn't saved!" << std::endl;
     }
-
-    return a.exec();
+    a->exit();
+    return 0;
 }
