@@ -18,11 +18,14 @@ int main(int argc, char *argv[])
     std::cout << path.toStdString().c_str() << std::endl;
     QFile file(path);
     if(file.open(QIODevice::WriteOnly)) {
+        QString msg = "Didn't saved!";
         if(pixmap.save(&file, "PNG")) {
-            std::cout << "Saved!" << std::endl;
-        } else {
-            std::cout << "Didn't save!" << std::endl;
+            msg = "Saved!";
         }
+        std::cout << msg.toStdString() << std::endl;
+        file.close();
+    } else {
+        std::cout << file.errorString().toStdString() << " (" << file.error() << ")" << std::endl;
     }
     a.exit();
     return 0;
