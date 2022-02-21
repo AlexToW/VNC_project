@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     QPixmap pixmap = screen->grabWindow(0);
 
     // chopping up the pixmap on N parts (width, heigth)
-    const int N = 20;
+    int N = 20;
     const int width_screen = screen->size().width();
     const int height_screen = screen->size().height();
     int width = width_screen;
@@ -69,9 +69,10 @@ int main(int argc, char *argv[])
     if(width_screen % N == 0 && height_screen % N == 0) {
         width = width_screen / N;
         height = height_screen / N;
+    } else {
+        N  = 1;
     }
 
-    //QVector<QVector<QVector<QPixmap>>> screen_parts_vector(2);
     while(1) {
         std::cout << "Start!" << std::endl;
         unsigned long secs_to_sleep = 2;
