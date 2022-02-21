@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
         if(pixmap.save(&file, "PNG")) {
             std::cout << "Saved!" << std::endl;
         } else {
-            std::cout << "Didn't saved!" << std::endl;
+            std::cout << "Didn't save!" << std::endl;
         }
     }
     a.exit();
