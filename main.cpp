@@ -4,23 +4,54 @@
 #include <QScreen>
 #include <QWindow>
 #include <QDir>
+#include <QThread>
 #include <iostream>
 //#include "main.moc"
 
 
-#define debug
+#define debugg
+
+
+struct Position {
+    Position() {
+        this->i = 0;
+        this->j = 0;
+    }
+    int i;
+    int j;
+};
+
+typedef struct Position Position;
 
 
 QVector<QVector<QPixmap>> get_screen_parts(QPixmap pixmap, int N, int width, int height) {
-     QVector<QVector<QPixmap>> screen_parts(N);
-     for(int i = 0; i < N; i++) {
-         for(int j = 0; j < N; j++) {
-             QPixmap temp = pixmap.copy(i * width, j * height, width, height);
-             screen_parts[i].push_back(temp);
-         }
-     }
-     return screen_parts;
+    QVector<QVector<QPixmap>> screen_parts(N);
+    for(int i = 0; i < N; i++) {
+        for(int j = 0; j < N; j++) {
+            QPixmap temp = pixmap.copy(i * width, j * height, width, height);
+            screen_parts[i].push_back(temp);
+        }
+    }
+    return screen_parts;
 }
+
+
+QVector<Position> get_diff(QVector<QVector<QPixmap>>& lhs, QVector<QVector<QPixmap>>& rhs) {
+    QVector<Position> diffs;
+    Position pos;
+    int N = lhs.count();
+    for(int i = 0; i < N; i++) {
+        for(int j = 0; j < N; j++) {
+            if(lhs[i][j].toImage() != rhs[i][j].toImage()) { // that should be slow
+                pos.i = i;
+                pos.j = j;
+                diffs.push_back(pos);
+            }
+        }
+    }
+    return diffs;
+}
+
 
 
 int main(int argc, char *argv[])
@@ -30,17 +61,31 @@ int main(int argc, char *argv[])
     QPixmap pixmap = screen->grabWindow(0);
 
     // chopping up the pixmap on N parts (width, heigth)
-    const int N = 4;
+    const int N = 20;
     const int width_screen = screen->size().width();
     const int height_screen = screen->size().height();
-    int width;
-    int height;
+    int width = width_screen;
+    int height = height_screen;
     if(width_screen % N == 0 && height_screen % N == 0) {
         width = width_screen / N;
         height = height_screen / N;
     }
 
-    QVector<QVector<QPixmap>> screen_parts = get_screen_parts(pixmap, N, width, height);
+    //QVector<QVector<QVector<QPixmap>>> screen_parts_vector(2);
+    while(1) {
+        std::cout << "Start!" << std::endl;
+        unsigned long secs_to_sleep = 2;
+        QVector<QVector<QPixmap>> screen_parts_1 = get_screen_parts(pixmap, N, width, height);
+        QThread::sleep(secs_to_sleep);
+        screen = a.primaryScreen();
+        pixmap = screen->grabWindow(0);
+        QVector<QVector<QPixmap>> screen_parts_2 = get_screen_parts(pixmap, N, width, height);
+        QVector<Position> diffs = get_diff(screen_parts_1, screen_parts_2);
+        QString diff_str = "Different at %1, %2";
+        foreach(Position pos, diffs) {
+            std::cout << diff_str.arg(pos.i).arg(pos.j).toStdString() << std::endl;
+        }
+    }
 
     #ifdef debug
         int cnt = 0;
