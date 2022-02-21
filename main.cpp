@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     QScreen *screen = a.primaryScreen();
     QPixmap pixmap = screen->grabWindow(0);
 
-    // chopping up the pixmap on N parts (width, heigth)
+    // chopping up the pixmap into N parts (width, heigth)
     const int N = 4;
     const int width_screen = screen->size().width();
     const int height_screen = screen->size().height();
